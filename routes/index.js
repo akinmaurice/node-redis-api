@@ -34,7 +34,7 @@ router.get(
 Route to get Delete Each user
 */
 router.delete(
-  '/user/delete/:userId',
+  '/user/:userId',
   appController.checkUserExists,
   appController.deleteUser,
 );
@@ -43,7 +43,7 @@ router.delete(
 Route to get Update user
 */
 router.put(
-  '/user/update/:userId',
+  '/user/:userId',
   appController.validateInput,
   appController.checkUserExists,
   appController.updateUser,

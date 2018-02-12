@@ -1,18 +1,18 @@
 // Require Redis Here
+const redis = require('redis');
 
 // import environmental variables from our variables.env file
 require('dotenv').config();
 
 
 // Connect to our Database
-const redis = require('redis');
-
 module.exports = redis.createClient(process.env.REDIS_PORT, process.env.REDIS_HOST);
 
 
 // Start our app!
 const app = require('./app');
 
+// Start Server
 app.set('port', process.env.PORT || 7777);
 const server = app.listen(app.get('port'), () => {
   console.log('##########################################################');

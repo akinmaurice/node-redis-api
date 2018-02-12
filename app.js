@@ -4,7 +4,6 @@ const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 
-// READY?! Let's go!
 
 // Import routes
 const index = require('./routes/index');
@@ -20,10 +19,26 @@ app.use(expressValidator());
 
 app.use(cookieParser());
 
-// After allllll that above middleware, we finally handle our own routes!
+// Handle Routes
 app.use('/', index);
 
-// Error Handling
+// catch 404 and forward to error handler
+app.use((req, res, next) => {
+  const err = new Error('Not Found');
+  err.status = 404;
+  next(err);
+});
 
-// done! we export it so we can start the site in start.js
+// error handler
+app.use((err, req, res, next) => {
+  // set locals, only providing error in development
+  res.locals.message = err.message;
+  res.locals.error = req.app.get('env') === 'development' ? err : {};
+
+  // render the error page
+  res.status(err.status || 500);
+  console.log(err);
+  res.json({ status: 400, message: 'Something Went Wrong', err });
+});
+
 module.exports = app;
