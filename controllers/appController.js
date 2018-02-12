@@ -30,6 +30,7 @@ exports.validateInput = (req, res, next) => {
   next();
 };
 
+
 /*
 Function to Create User
 */
@@ -61,6 +62,32 @@ exports.addUser = (req, res) => {
 };
 
 /*
+Function to get all Users
+*/
+exports.getUsers = (req, res) => {
+  client.keys('*', (err, keys) => {
+    if (err) {
+      return res.json({ status: 300, message: 'could not fetch users', err });
+    }
+    if (keys) {
+      async.map(keys, (key, cb) => {
+        client.hgetall(key, (error, value) => {
+          if (error) return res.json({ status: 400, message: 'Something went wrong', error });
+          const user = {};
+          user.userId = key;
+          user.data = value;
+          cb(null, user);
+        });
+      }, (error, users) => {
+        if (error) return res.json({ status: 400, message: 'Something went wrong', error });
+        res.json(users);
+      });
+    }
+  });
+};
+
+
+/*
 Functioon to get each User
 */
 exports.getUser = (req, res) => {
@@ -73,18 +100,6 @@ exports.getUser = (req, res) => {
   });
 };
 
-/*
-Function to Delete Each User
-*/
-exports.deleteUser = (req, res) => {
-  const { userId } = req.params;
-  client.del(userId, (err, reply) => {
-    if (err) {
-      return res.json({ status: 400, message: 'Something went wrong', err });
-    }
-    return res.json({ status: 200, message: 'User Deleted', reply });
-  });
-};
 
 // Middleware to check user exists before update and Delete
 exports.checkUserExists = (req, res, next) => {
@@ -99,6 +114,8 @@ exports.checkUserExists = (req, res, next) => {
     next();
   });
 };
+
+
 /*
 Function to Update User
 */
@@ -122,28 +139,18 @@ exports.updateUser = (req, res) => {
     },
   );
 };
+
+
 /*
-Function to get all Users
+Function to Delete Each User
 */
-exports.getUsers = (req, res) => {
-  client.keys('*', (err, keys) => {
+exports.deleteUser = (req, res) => {
+  const { userId } = req.params;
+  client.del(userId, (err, reply) => {
     if (err) {
-      return res.json({ status: 300, message: 'could not fetch users', err });
+      return res.json({ status: 400, message: 'Something went wrong', err });
     }
-    if (keys) {
-      async.map(keys, (key, cb) => {
-        client.hgetall(key, (error, value) => {
-          if (error) return res.json({ status: 400, message: 'Something went wrong', error });
-          const user = {};
-          user.userId = key;
-          user.data = value;
-          cb(null, user);
-        });
-      }, (error, users) => {
-        if (error) return res.json({ status: 400, message: 'Something went wrong', error });
-        res.json(users);
-      });
-    }
+    return res.json({ status: 200, message: 'User Deleted', reply });
   });
 };
 
