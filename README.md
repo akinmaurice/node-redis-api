@@ -13,6 +13,8 @@ CRUD RESTFUL API using Node JS, Express JS, and Redis.
 
 ## Getting Started
 
+Ensure Redis is Installed and running on the machine.
+
   1. `git clone https://github.com/akinmaurice/node-redis-api.git`
   2. `cd node-redis-api`
   3. `npm install`

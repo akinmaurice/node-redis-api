@@ -51,11 +51,13 @@ exports.addUser = (req, res) => {
         'name', newUser.name,
         'age', newUser.age,
       ]
-      , (error, status) => {
+      , (error, result) => {
         if (error) {
           return res.json(error);
         }
-        return res.json({ status, message: 'User Created', newUser });
+        return res.json({
+          result, status: 200, message: 'User Created', newUser,
+        });
       },
     );
   });
@@ -129,12 +131,12 @@ exports.updateUser = (req, res) => {
       'name', updatedUser.name,
       'age', updatedUser.age,
     ]
-    , (err, reply) => {
+    , (err, result) => {
       if (err) {
         return res.json({ status: 400, message: 'Something went wrong', err });
       }
       return res.json({
-        status: 200, reply, message: 'User Updated', updatedUser,
+        status: 200, result, message: 'User Updated', updatedUser,
       });
     },
   );
@@ -146,11 +148,11 @@ Function to Delete Each User
 */
 exports.deleteUser = (req, res) => {
   const { userId } = req.params;
-  client.del(userId, (err, reply) => {
+  client.del(userId, (err, result) => {
     if (err) {
       return res.json({ status: 400, message: 'Something went wrong', err });
     }
-    return res.json({ status: 200, message: 'User Deleted', reply });
+    return res.json({ status: 200, message: 'User Deleted', result });
   });
 };
 
