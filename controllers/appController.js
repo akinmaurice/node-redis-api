@@ -24,7 +24,7 @@ exports.validateInput = (req, res, next) => {
   req.checkBody('age', 'Age must be Provided!').notEmpty();
   const errors = req.validationErrors();
   if (errors) {
-    res.json({ status: 406, errors, message: errors[0].msg });
+    res.json({ status: 400, errors, message: errors[0].msg });
     return;
   }
   next();
@@ -67,7 +67,7 @@ exports.getUser = (req, res) => {
   const { userId } = req.params;
   client.hgetall(userId, (err, user) => {
     if (err) {
-      return res.json(err);
+      return res.json({ status: 400, message: 'Something went wrong', err });
     }
     return res.json(user);
   });
@@ -80,7 +80,7 @@ exports.deleteUser = (req, res) => {
   const { userId } = req.params;
   client.del(userId, (err, reply) => {
     if (err) {
-      return res.json(err);
+      return res.json({ status: 400, message: 'Something went wrong', err });
     }
     return res.json({ status: 200, message: 'User Deleted', reply });
   });
@@ -91,7 +91,7 @@ exports.checkUserExists = (req, res, next) => {
   const { userId } = req.params;
   client.hgetall(userId, (err, user) => {
     if (err) {
-      return res.json(err);
+      return res.json({ status: 400, message: 'Something went wrong', err });
     }
     if (!user) {
       return res.json({ status: 400, message: 'Could not find that user' });
@@ -112,11 +112,13 @@ exports.updateUser = (req, res) => {
       'name', updatedUser.name,
       'age', updatedUser.age,
     ]
-    , (err, status) => {
+    , (err, reply) => {
       if (err) {
-        return res.json(err);
+        return res.json({ status: 400, message: 'Something went wrong', err });
       }
-      return res.json({ status, message: 'User Updated', updatedUser });
+      return res.json({
+        status: 200, reply, message: 'User Updated', updatedUser,
+      });
     },
   );
 };
@@ -131,15 +133,14 @@ exports.getUsers = (req, res) => {
     if (keys) {
       async.map(keys, (key, cb) => {
         client.hgetall(key, (error, value) => {
-          if (error) return cb(error);
+          if (error) return res.json({ status: 400, message: 'Something went wrong', error });
           const user = {};
           user.userId = key;
           user.data = value;
           cb(null, user);
         });
       }, (error, users) => {
-        if (error) return console.log(error);
-        console.log(users);
+        if (error) return res.json({ status: 400, message: 'Something went wrong', error });
         res.json(users);
       });
     }
