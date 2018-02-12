@@ -32,8 +32,7 @@ The above will get you a copy of the project up and running on your local machin
 
 ## API Endpoints
 
-All API endpoints return a status code of 200 for successful calls and 400 for
-unsuccessful calls.
+All API endpoints return a status code of 200 for successful calls and 400 including an error object for unsuccessful calls.
 
 ```
 | EndPoint                                |   Functionality                      |

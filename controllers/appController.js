@@ -6,7 +6,7 @@ const async = require('async');
 Function to handle the Index Route
 */
 exports.getIndexPage = (req, res) => {
-  res.json({ status: 200, message: 'Index Route Here' });
+  res.json({ status: 200, message: 'Simple CRUD RESTFUL API using Node JS, Express JS, and Redis.' });
 };
 
 /*
@@ -53,7 +53,7 @@ exports.addUser = (req, res) => {
       ]
       , (error, result) => {
         if (error) {
-          return res.json(error);
+          return res.json({ status: 400, message: 'Something went wrong', error });
         }
         return res.json({
           result, status: 200, message: 'User Created', newUser,
@@ -69,7 +69,7 @@ Function to get all Users
 exports.getUsers = (req, res) => {
   client.keys('*', (err, keys) => {
     if (err) {
-      return res.json({ status: 300, message: 'could not fetch users', err });
+      return res.json({ status: 400, message: 'could not fetch users', err });
     }
     if (keys) {
       async.map(keys, (key, cb) => {
