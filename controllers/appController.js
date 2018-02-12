@@ -1,4 +1,8 @@
-const client = require('../start');
+// Require Redis Here
+const redis = require('redis');
+
+// Connect to our Database
+const client = redis.createClient(process.env.REDIS_PORT, process.env.REDIS_HOST);
 
 const md5 = require('md5');
 const async = require('async');
